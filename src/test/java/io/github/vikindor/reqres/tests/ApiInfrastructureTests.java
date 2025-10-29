@@ -22,16 +22,16 @@ public class ApiInfrastructureTests extends TestBase{
     @Tag("Performance") @Tag("Smoke")
     void shouldHaveFastResponseTime() {
         Response response = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                 .when()
                         .get(USERS)
         );
 
-        step("Check response status 200", () ->
+        step("Check that response status is 200", () ->
                 response.then().spec(ok200ResponseSpec())
         );
 
-        step("Check response time <1500 ms", () ->
+        step("Check that response time is <1500 ms", () ->
                 assertThat(response.time() < 1500)
         );
     }
@@ -41,7 +41,7 @@ public class ApiInfrastructureTests extends TestBase{
     @Tag("Etag")
     void shouldReturn304WhenResourceNotChanged() {
         String response = step("Make request and extract ETag", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                 .when()
                         .get(USERS)
                 .then()
@@ -49,8 +49,8 @@ public class ApiInfrastructureTests extends TestBase{
                         .extract().header(Headers.ETAG)
         );
 
-        step("Check that if header has 'If-None-Match' then response 304 Not Modified", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+        step("Check that if header has 'If-None-Match' then response status is 304", () ->
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                         .header(Headers.IF_NONE_MATCH, response)
                 .when()
                         .get(USERS)

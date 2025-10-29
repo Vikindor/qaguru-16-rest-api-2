@@ -25,12 +25,12 @@ public class AuthenticationTest extends TestBase{
         int userId = 1;
 
         Response response = step("Make request", () ->
-        given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+        given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
         .when()
                 .get(SINGLE_USER, userId)
         );
 
-        step("Check response status 200", () ->
+        step("Check that response status is 200", () ->
                 response.then().spec(ok200ResponseSpec())
         );
     }
@@ -42,7 +42,7 @@ public class AuthenticationTest extends TestBase{
         int userId = 999;
 
         ErrorResponse errorResponse = step("Make request", ()->
-        given(requestWithApiKey(baseLink, apiKeyName, "invalid"))
+        given(requestWithApiKey(baseUrl, apiKeyName, "invalid"))
         .when()
                 .get(SINGLE_USER, userId)
         .then()
@@ -50,7 +50,7 @@ public class AuthenticationTest extends TestBase{
                 .extract().as(ErrorResponse.class)
         );
 
-        step("Check that response has error", ()->
+        step("Check that response has expected error", ()->
                 assertEquals(AuthenticationErrors.INVALID_API_KEY.getMessage(), errorResponse.getError())
         );
     }
@@ -62,7 +62,7 @@ public class AuthenticationTest extends TestBase{
         int userId = 999;
 
         ErrorResponse errorResponse = step("Make request", ()->
-        given(requestWithoutApiKey(baseLink))
+        given(requestWithoutApiKey(baseUrl))
         .when()
                 .get(SINGLE_USER, userId)
         .then()
@@ -70,7 +70,7 @@ public class AuthenticationTest extends TestBase{
                 .extract().as(ErrorResponse.class)
         );
 
-        step("Check that response has error", ()->
+        step("Check that response has expected error", ()->
                 assertEquals(AuthenticationErrors.MISSING_API_KEY.getMessage(), errorResponse.getError())
         );
     }

@@ -28,7 +28,7 @@ public class UsersTests extends TestBase {
     @Tag("Users") @Tag("Positive") @Tag("Smoke")
     void shouldValidateBasicFieldsForUser() {
         List<UserListItemResponse> users = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                 .when()
                         .get(USERS)
                 .then()
@@ -36,7 +36,7 @@ public class UsersTests extends TestBase {
                         .extract().jsonPath().getList("data", UserListItemResponse.class)
         );
 
-        step("Check all fields are valid", () -> {
+        step("Check that all fields are valid", () -> {
             assertThat(users).allSatisfy(u -> {
                 assertThat(u.getId()).isPositive();
                 assertThat(u.getEmail()).contains("@");
@@ -52,7 +52,7 @@ public class UsersTests extends TestBase {
     @Tag("Pagination") @Tag("Positive")
     void shouldReturnEmptyListWhenPageBeyondTotal() {
         List<UserListItemResponse> users = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                         .queryParam("page", 9999)
                 .when()
                         .get(USERS)
@@ -61,7 +61,7 @@ public class UsersTests extends TestBase {
                         .extract().jsonPath().getList("data", UserListItemResponse.class)
         );
 
-        step("Check that body is empty", () -> {
+        step("Check that response body is empty", () -> {
             assertThat(users).isEmpty();
         });
     }
@@ -73,7 +73,7 @@ public class UsersTests extends TestBase {
         int userId = ThreadLocalRandom.current().nextInt(1, 7);
 
         UserListItemResponse response = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                 .when()
                         .get(SINGLE_USER, userId)
                 .then()
@@ -81,7 +81,7 @@ public class UsersTests extends TestBase {
                         .extract().jsonPath().getObject("data", UserListItemResponse.class)
         );
 
-        step("Check user is valid", () -> {
+        step("Check that user is valid", () -> {
             assertThat(response.getId()).isEqualTo(userId);
             assertThat(response.getEmail()).contains("@");
         });
@@ -94,12 +94,12 @@ public class UsersTests extends TestBase {
         int userId = 99999999;
 
         Response response = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                 .when()
                         .get(SINGLE_USER, userId)
         );
 
-        step("Check response status 404", () ->
+        step("Check that response status is 404", () ->
                 response.then().spec(notFound404ResponseSpec())
         );
     }
@@ -111,12 +111,12 @@ public class UsersTests extends TestBase {
         String userId = "abc";
 
         Response response = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                 .when()
                         .get(SINGLE_USER, userId)
         );
 
-        step("Check response status 404", () ->
+        step("Check that response status is 404", () ->
                 response.then().spec(notFound404ResponseSpec())
         );
     }
@@ -129,7 +129,7 @@ public class UsersTests extends TestBase {
         UpdateUserRequestModel payload = new UpdateUserRequestModel("Tester", "QA Engineer");
 
         UpdateUserResponseModel response = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                         .body(payload)
                 .when()
                         .put(SINGLE_USER, userId)
@@ -153,13 +153,13 @@ public class UsersTests extends TestBase {
         UpdateUserRequestModel payload = new UpdateUserRequestModel("Tester", "QA Engineer");
 
         Response response = step("Make request", () ->
-                given(requestWithoutContentType(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithoutContentType(baseUrl, apiKeyName, apiKeyValue))
                         .body(payload)
                 .when()
                         .put(SINGLE_USER, userId)
         );
 
-        step("Check response status 415", ()->
+        step("Check that response status is 415", ()->
                 response.then().spec(unsupportedMediaType415ResponseSpec())
         );
     }
@@ -172,7 +172,7 @@ public class UsersTests extends TestBase {
         UpdateUserRequestModel payload = new UpdateUserRequestModel("", "QA Engineer");
 
         UpdateUserResponseModel response = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                         .body(payload)
                 .when()
                         .put(SINGLE_USER, userId)
@@ -194,12 +194,12 @@ public class UsersTests extends TestBase {
         int userId = 2;
 
         Response response = step("Make request", () ->
-                given(requestWithApiKey(baseLink, apiKeyName, apiKeyValue))
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
                 .when()
                         .delete(SINGLE_USER, userId)
         );
 
-        step("Check response status 204", () ->
+        step("Check that response status is 204", () ->
                 response.then().spec(noContent204ResponseSpec())
         );
     }
