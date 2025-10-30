@@ -1,5 +1,8 @@
 <html>
-  <#-- @ftlvariable name="data" type="io.qameta.allure.attachment.http.HttpResponseAttachment" -->
+  <#--
+  @ftlvariable name="data" type="io.qameta.allure.attachment.http.HttpResponseAttachment"
+  Custom HTTP template for Allure Report, v2.0. Created by Vikindor (https://vikindor.github.io/)
+  -->
   <head>
     <meta charset="UTF-8">
     <title>Response</title>
@@ -8,16 +11,17 @@
         --border: #e1e4e8;
         --bg-page: #f8f8f9;
         --bg-card: #f6f8fa;
-        --text: #24292e;
+        --text-title: #2b2f36;
+        --text-body:  #000000;
         --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         --radius: 6px;
-        --space: 20px;
+        --space: 10px;
       }
-      html, body { margin: 0; padding: 0; color: var(--text); background: var(--bg-page); }
+      html, body { background: var(--bg-page); color: var(--text-body); margin: 0; padding: 0; }
       body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial; padding: var(--space); }
-      .block { border: 1px solid var(--border); border-radius: var(--radius); background: #fff; margin: 0; }
+      .block { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); margin: 0; }
       .block + .block { margin-top: var(--space); }
-      .block__title { background: var(--bg-card); padding: 10px 14px; border-bottom: 1px solid var(--border); font-weight: 600; }
+      .block__title { background: var(--bg-card); padding: 10px 14px; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text-title); border-top-left-radius: var(--radius); border-top-right-radius: var(--radius); background-clip: padding-box; }
       .block__body { padding: 12px 14px; }
       pre, code { font-family: var(--mono); font-size: 12px; }
       pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
