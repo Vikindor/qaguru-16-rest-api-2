@@ -1,7 +1,7 @@
 package io.github.vikindor.reqres.tests;
 
-import io.github.vikindor.reqres.models.common.ErrorResponse;
-import io.github.vikindor.reqres.models.errors.AuthenticationErrors;
+import io.github.vikindor.reqres.models.ErrorResponse;
+import io.github.vikindor.reqres.models.ErrorMessages;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.github.vikindor.reqres.helpers.Endpoints.*;
 import static io.github.vikindor.reqres.specs.AuthenticationSpecs.*;
-import static io.github.vikindor.reqres.specs.ApiInfrastructureSpecs.*;
+import static io.github.vikindor.reqres.specs.common.ResponseSpec.responseSpec;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,13 +25,13 @@ public class AuthenticationTest extends TestBase{
         int userId = 1;
 
         Response response = step("Make request", () ->
-        given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
-        .when()
-                .get(SINGLE_USER, userId)
+                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
+                .when()
+                        .get(SINGLE_USER, userId)
         );
 
         step("Check that response status is 200", () ->
-                response.then().spec(ok200ResponseSpec())
+                response.then().spec(responseSpec(200))
         );
     }
 
@@ -42,16 +42,16 @@ public class AuthenticationTest extends TestBase{
         int userId = 999;
 
         ErrorResponse errorResponse = step("Make request", ()->
-        given(requestWithApiKey(baseUrl, apiKeyName, "invalid"))
-        .when()
-                .get(SINGLE_USER, userId)
-        .then()
-                .spec(forbidden403ResponseSpec())
-                .extract().as(ErrorResponse.class)
+                given(requestWithApiKey(baseUrl, apiKeyName, "invalid"))
+                .when()
+                        .get(SINGLE_USER, userId)
+                .then()
+                        .spec(responseSpec(403))
+                        .extract().as(ErrorResponse.class)
         );
 
         step("Check that response has expected error", ()->
-                assertEquals(AuthenticationErrors.INVALID_API_KEY.getMessage(), errorResponse.getError())
+                assertEquals(ErrorMessages.INVALID_API_KEY.getMessage(), errorResponse.getError())
         );
     }
 
@@ -62,16 +62,16 @@ public class AuthenticationTest extends TestBase{
         int userId = 999;
 
         ErrorResponse errorResponse = step("Make request", ()->
-        given(requestWithoutApiKey(baseUrl))
-        .when()
-                .get(SINGLE_USER, userId)
-        .then()
-                .spec(unauthorized401ResponseSpec())
-                .extract().as(ErrorResponse.class)
+                given(requestWithoutApiKey(baseUrl))
+                .when()
+                        .get(SINGLE_USER, userId)
+                .then()
+                        .spec(responseSpec(401))
+                        .extract().as(ErrorResponse.class)
         );
 
         step("Check that response has expected error", ()->
-                assertEquals(AuthenticationErrors.MISSING_API_KEY.getMessage(), errorResponse.getError())
+                assertEquals(ErrorMessages.MISSING_API_KEY.getMessage(), errorResponse.getError())
         );
     }
 }

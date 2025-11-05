@@ -45,22 +45,4 @@ public class AuthenticationSpecs {
                 .accept(JSON)
                 .contentType(JSON);
     }
-
-    public static ResponseSpecification unauthorized401ResponseSpec() {
-        return new ResponseSpecBuilder()
-                .expectStatusCode(401)
-                .expectContentType(JSON)
-                .log(STATUS)
-                .log(BODY)
-                .build();
-    }
-
-    public static ResponseSpecification forbidden403ResponseSpec() {
-        return new ResponseSpecBuilder()
-                .expectStatusCode(403)
-                .expectContentType(JSON)
-                .log(STATUS)
-                .log(BODY)
-                .build();
-    }
 }

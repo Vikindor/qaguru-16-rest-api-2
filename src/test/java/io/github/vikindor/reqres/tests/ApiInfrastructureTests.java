@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static io.github.vikindor.reqres.helpers.Endpoints.USERS;
-import static io.github.vikindor.reqres.specs.ApiInfrastructureSpecs.*;
 import static io.github.vikindor.reqres.specs.AuthenticationSpecs.*;
+import static io.github.vikindor.reqres.specs.common.ResponseSpec.responseSpec;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +28,7 @@ public class ApiInfrastructureTests extends TestBase{
         );
 
         step("Check that response status is 200", () ->
-                response.then().spec(ok200ResponseSpec())
+                response.then().spec(responseSpec(200))
         );
 
         step("Check that response time is <1500 ms", () ->
@@ -45,7 +45,7 @@ public class ApiInfrastructureTests extends TestBase{
                 .when()
                         .get(USERS)
                 .then()
-                        .spec(ok200ResponseSpec())
+                        .spec(responseSpec(200))
                         .extract().header(Headers.ETAG)
         );
 
@@ -55,7 +55,7 @@ public class ApiInfrastructureTests extends TestBase{
                 .when()
                         .get(USERS)
                 .then()
-                        .spec(notModified304ResponseSpec())
+                        .spec(responseSpec(304))
         );
     }
 }

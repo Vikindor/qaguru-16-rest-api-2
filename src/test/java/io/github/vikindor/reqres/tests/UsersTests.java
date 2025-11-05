@@ -1,5 +1,7 @@
 package io.github.vikindor.reqres.tests;
 
+import io.github.vikindor.reqres.models.ErrorMessages;
+import io.github.vikindor.reqres.models.ErrorResponse;
 import io.github.vikindor.reqres.models.users.UpdateUserRequestModel;
 import io.github.vikindor.reqres.models.users.UpdateUserResponseModel;
 import io.github.vikindor.reqres.models.users.UserListItemResponse;
@@ -14,10 +16,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import static io.github.vikindor.reqres.helpers.Endpoints.SINGLE_USER;
 import static io.github.vikindor.reqres.helpers.Endpoints.USERS;
 import static io.github.vikindor.reqres.specs.AuthenticationSpecs.*;
-import static io.github.vikindor.reqres.specs.ApiInfrastructureSpecs.*;
+import static io.github.vikindor.reqres.specs.common.ResponseSpec.responseSpec;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Users Endpoint Tests")
 @Tag("Users") @Tag("Regression")
@@ -32,7 +35,7 @@ public class UsersTests extends TestBase {
                 .when()
                         .get(USERS)
                 .then()
-                        .spec(ok200ResponseSpec())
+                        .spec(responseSpec(200))
                         .extract().jsonPath().getList("data", UserListItemResponse.class)
         );
 
@@ -57,7 +60,7 @@ public class UsersTests extends TestBase {
                 .when()
                         .get(USERS)
                 .then()
-                        .spec(ok200ResponseSpec())
+                        .spec(responseSpec(200))
                         .extract().jsonPath().getList("data", UserListItemResponse.class)
         );
 
@@ -77,7 +80,7 @@ public class UsersTests extends TestBase {
                 .when()
                         .get(SINGLE_USER, userId)
                 .then()
-                        .spec(ok200ResponseSpec())
+                        .spec(responseSpec(200))
                         .extract().jsonPath().getObject("data", UserListItemResponse.class)
         );
 
@@ -100,7 +103,7 @@ public class UsersTests extends TestBase {
         );
 
         step("Check that response status is 404", () ->
-                response.then().spec(notFound404ResponseSpec())
+                response.then().spec(responseSpec(404))
         );
     }
 
@@ -117,7 +120,7 @@ public class UsersTests extends TestBase {
         );
 
         step("Check that response status is 404", () ->
-                response.then().spec(notFound404ResponseSpec())
+                response.then().spec(responseSpec(404))
         );
     }
 
@@ -134,7 +137,7 @@ public class UsersTests extends TestBase {
                 .when()
                         .put(SINGLE_USER, userId)
                 .then()
-                        .spec(ok200ResponseSpec())
+                        .spec(responseSpec(200))
                         .extract().as(UpdateUserResponseModel.class)
         );
 
@@ -152,15 +155,18 @@ public class UsersTests extends TestBase {
         int userId = 2;
         UpdateUserRequestModel payload = new UpdateUserRequestModel("Tester", "QA Engineer");
 
-        Response response = step("Make request", () ->
+        ErrorResponse errorResponse = step("Make request", ()->
                 given(requestWithoutContentType(baseUrl, apiKeyName, apiKeyValue))
                         .body(payload)
                 .when()
                         .put(SINGLE_USER, userId)
+                .then()
+                        .spec(responseSpec(415))
+                        .extract().as(ErrorResponse.class)
         );
 
-        step("Check that response status is 415", ()->
-                response.then().spec(unsupportedMediaType415ResponseSpec())
+        step("Check that response has expected error", ()->
+                assertEquals(ErrorMessages.UNSUPPORTED_MEDIA_TYPE.getMessage(), errorResponse.getError())
         );
     }
 
@@ -177,7 +183,7 @@ public class UsersTests extends TestBase {
                 .when()
                         .put(SINGLE_USER, userId)
                 .then()
-                        .spec(ok200ResponseSpec())
+                        .spec(responseSpec(200))
                         .extract().as(UpdateUserResponseModel.class)
         );
 
@@ -200,7 +206,7 @@ public class UsersTests extends TestBase {
         );
 
         step("Check that response status is 204", () ->
-                response.then().spec(noContent204ResponseSpec())
+                response.then().spec(responseSpec(204))
         );
     }
 }
