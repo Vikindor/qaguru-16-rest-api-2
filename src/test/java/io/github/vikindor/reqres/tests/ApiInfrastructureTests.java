@@ -14,16 +14,18 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("API Infrastructure and Technical Validation Tests")
-@Tag("Infrastructure") @Tag("Regression")
-public class ApiInfrastructureTests extends TestBase{
+@Tag("Infrastructure")
+@Tag("Regression")
+public class ApiInfrastructureTests extends TestBase {
 
     @Test
     @DisplayName("Should respond within acceptable time threshold")
-    @Tag("Performance") @Tag("Smoke")
+    @Tag("Performance")
+    @Tag("Smoke")
     void shouldHaveFastResponseTime() {
         Response response = step("Make request", () ->
-                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
-                .when()
+                given(requestWithApiKey(apiKeyName, apiKeyValue))
+                        .when()
                         .get(USERS)
         );
 
@@ -41,20 +43,20 @@ public class ApiInfrastructureTests extends TestBase{
     @Tag("Etag")
     void shouldReturn304WhenResourceNotChanged() {
         String response = step("Make request and extract ETag", () ->
-                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
-                .when()
+                given()
+                        .when()
                         .get(USERS)
-                .then()
+                        .then()
                         .spec(responseSpec(200))
                         .extract().header(Headers.ETAG)
         );
 
         step("Check that if header has 'If-None-Match' then response status is 304", () ->
-                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
+                given()
                         .header(Headers.IF_NONE_MATCH, response)
-                .when()
+                        .when()
                         .get(USERS)
-                .then()
+                        .then()
                         .spec(responseSpec(304))
         );
     }

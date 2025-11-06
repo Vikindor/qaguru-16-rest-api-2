@@ -15,18 +15,21 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("Authentication and Authorization Tests")
-@Tag("Auth") @Tag("Regression")
-public class AuthenticationTest extends TestBase{
+@Tag("Auth")
+@Tag("Regression")
+public class AuthenticationTest extends TestBase {
 
     @Test
     @DisplayName("Should return 200 when API key is valid")
-    @Tag("Auth") @Tag("Positive") @Tag("Smoke")
+    @Tag("Auth")
+    @Tag("Positive")
+    @Tag("Smoke")
     void shouldReturn200WhenApiKeyValid() {
         int userId = 1;
 
         Response response = step("Make request", () ->
-                given(requestWithApiKey(baseUrl, apiKeyName, apiKeyValue))
-                .when()
+                given(requestWithApiKey(apiKeyName, apiKeyValue))
+                        .when()
                         .get(SINGLE_USER, userId)
         );
 
@@ -37,40 +40,42 @@ public class AuthenticationTest extends TestBase{
 
     @Test
     @DisplayName("Should return 403 when API key is invalid")
-    @Tag("Auth") @Tag("Negative")
+    @Tag("Auth")
+    @Tag("Negative")
     void shouldReturn403WhenApiKeyInvalid() {
         int userId = 999;
 
-        ErrorResponse errorResponse = step("Make request", ()->
-                given(requestWithApiKey(baseUrl, apiKeyName, "invalid"))
-                .when()
+        ErrorResponse errorResponse = step("Make request", () ->
+                given(requestWithApiKey(apiKeyName, "invalid"))
+                        .when()
                         .get(SINGLE_USER, userId)
-                .then()
+                        .then()
                         .spec(responseSpec(403))
                         .extract().as(ErrorResponse.class)
         );
 
-        step("Check that response has expected error", ()->
+        step("Check that response has expected error", () ->
                 assertEquals(ErrorMessages.INVALID_API_KEY.getMessage(), errorResponse.getError())
         );
     }
 
     @Test
     @DisplayName("Should return 401 when API key is missing")
-    @Tag("Auth") @Tag("Negative")
+    @Tag("Auth")
+    @Tag("Negative")
     void shouldReturn401WhenApiKeyMissing() {
         int userId = 999;
 
-        ErrorResponse errorResponse = step("Make request", ()->
-                given(requestWithoutApiKey(baseUrl))
-                .when()
+        ErrorResponse errorResponse = step("Make request", () ->
+                given(requestWithoutApiKey())
+                        .when()
                         .get(SINGLE_USER, userId)
-                .then()
+                        .then()
                         .spec(responseSpec(401))
                         .extract().as(ErrorResponse.class)
         );
 
-        step("Check that response has expected error", ()->
+        step("Check that response has expected error", () ->
                 assertEquals(ErrorMessages.MISSING_API_KEY.getMessage(), errorResponse.getError())
         );
     }

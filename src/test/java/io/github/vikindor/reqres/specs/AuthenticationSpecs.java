@@ -12,36 +12,33 @@ import static io.restassured.http.ContentType.JSON;
 
 public class AuthenticationSpecs {
 
-    public static RequestSpecification requestWithApiKey(String baseLink, String apiKeyName, String apiKeyValue) {
+    public static RequestSpecification requestWithApiKey(String apiKeyName, String apiKeyValue) {
         return with()
                 .filter(withCustomTemplate())
                 .log().uri()
                 .log().body()
                 .log().headers()
-                .baseUri(baseLink)
                 .accept(JSON)
                 .contentType(JSON)
                 .header(apiKeyName, apiKeyValue);
     }
 
-    public static RequestSpecification requestWithoutContentType(String baseLink, String apiKeyName, String apiKeyValue) {
+    public static RequestSpecification requestWithoutContentType(String apiKeyName, String apiKeyValue) {
         return with()
                 .filter(withCustomTemplate())
                 .log().uri()
                 .log().body()
                 .log().headers()
-                .baseUri(baseLink)
                 .accept(JSON)
                 .header(apiKeyName, apiKeyValue);
     }
 
-    public static RequestSpecification requestWithoutApiKey(String baseLink) {
+    public static RequestSpecification requestWithoutApiKey() {
         return with()
                 .filter(withCustomTemplate())
                 .log().uri()
                 .log().body()
                 .log().headers()
-                .baseUri(baseLink)
                 .accept(JSON)
                 .contentType(JSON);
     }
