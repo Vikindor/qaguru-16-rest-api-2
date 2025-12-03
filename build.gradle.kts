@@ -12,12 +12,12 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:6.0.0-M2"))
+    testImplementation(platform("org.junit:junit-bom:6.0.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("io.rest-assured:rest-assured:5.5.6")
     testImplementation("io.rest-assured:json-schema-validator:5.5.6")
-    testImplementation("org.assertj:assertj-core:3.26.0")
-    testImplementation("io.qameta.allure:allure-rest-assured:2.30.0")
+    testImplementation("org.assertj:assertj-core:3.27.6")
+    testImplementation("io.qameta.allure:allure-rest-assured:2.31.0")
     allureRawResultElements(files(layout.buildDirectory.dir("allure-results")))
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("org.slf4j:slf4j-simple:2.0.17")
